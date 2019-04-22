@@ -1,0 +1,22 @@
+{
+    "name": "智能借贷",
+    "short_name": "智能借贷平台",
+    "description": "58金融|58消费贷|58贷款|学生贷款|消费贷款|小额贷款|现金贷款",
+    "icons": [
+        {
+            "src": "/img/icon.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/icon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ],
+    "start_url": "/index.html",
+    "display": "fullscreen",
+    "theme_color": "#37ACF4",
+    "background_color": "#37ACF4",
+    "gcm_sender_id": "279298881491"
+}

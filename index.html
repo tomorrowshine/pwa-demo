@@ -1,0 +1,36 @@
+<html>
+
+<head>
+    <title>PWA功能体验</title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,shrink-to-fit=no,user-scalable=0">
+    <meta name="theme-color" content="#000000">
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="origin-trial" content="**insert your token as provided in the developer console**">
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="//cdn.jsdelivr.net/npm/pouchdb@7.0.0/dist/pouchdb.min.js"></script>
+    <script src="/js/db.js"></script>
+    <script src="/js/index.js" defer></script>
+</head>
+
+<body>
+    <header>
+        静态文字
+    </header>
+    <img src="/img/bg.jpg" />
+    <a href="/img/other.jpg" title="打开预缓存的图片">打开预缓存的图片</a>
+
+    <button id="add-button">Add to home screen</button><br/>
+    <button id="share">分享</button><br/>
+    <button id="doIt">推送</button><br/>
+    <input id="input_text" type="input" />
+    <input value="添加" type="button" onclick="addWord()" />
+    <div id="list"></div>
+    <img src=" https://mdn.mozillademos.org/files/12630/important-notes.png" />
+</body>
+
+</html>
