@@ -28,9 +28,9 @@ if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
 // );
 
 const server = http.createServer((req, res) => {
-    console.log('req');
+    console.log('req', req.url);
     // 添加响应头
-    res.setHeader("Access-Control-Allow-Methods", "*");
+    res.setHeader('Access-Control-Allow-Origin', '*');
     var postData = "";
     /**
      * 因为post方式的数据不太一样可能很庞大复杂，
@@ -44,27 +44,48 @@ const server = http.createServer((req, res) => {
      * 这个是如果数据读取完毕就会执行的监听方法
      */
     req.addListener("end", function () {
-        var query = JSON.parse(postData)
-        if (!query.subscription) {
-            return res.end('subscription is null');
-        } else {
+        console.log(postData);
+
+        var query = JSON.parse(postData);
+        if (req.url === '/sendNotification') {
+            pushMsg(query, res);
+        } else if (req.url === '/sendSync') {
             setTimeout(function () {
-                // push的数据
+                console.log('setTimeout end');
                 const payload = {
-                    title: '收到一个图片',
+                    title: '后端同步测试',
                     body: '点开看看吧',
                     icon: '/img/icon.png',
-                    tag: 'silent',//silent  openWindow,
-                    data: { title: '电脑', url: "http://localhost:3000/img/other.jpg" }
+                    tag: 'openWindow',//silent  openWindow,
+                    data: { title: '电脑', url: "http://127.0.0.1:3000/img/other.jpg" }
                 };
-                console.log(query.subscription);
-                webPush.sendNotification(query.subscription, JSON.stringify(payload));
-            }, 2000);
-            res.end('ok');
+                res.end(JSON.stringify(payload));
+            }, 5000);
         }
     });
 
 });
+
+function pushMsg(query, res) {
+    if (!query.subscription) {
+        return res.end('subscription is null');
+    } else {
+        setTimeout(function () {
+            console.log('setTimeout end');
+            // push的数据
+            const payload = {
+                title: '收到一个图片',
+                body: '点开看看吧',
+                icon: '/img/icon.png',
+                tag: 'openWindow',//silent  openWindow,
+                data: { title: '电脑', url: "http://127.0.0.1:3000/img/other.jpg" }
+            };
+            webPush.sendNotification(query.subscription, JSON.stringify(payload));
+        }, 5000);
+        res.end('ok');
+    }
+}
+
 server.on('clientError', (err, socket) => {
     socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
 });

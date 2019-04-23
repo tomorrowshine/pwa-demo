@@ -1,9 +1,8 @@
-// https://segmentfault.com/a/1190000012353473?utm_source=tag-newest
 var cacheName = 'v1';
 var appShellFiles = [
-  '/index.html',
   '/img/other.jpg',
 ];
+
 // 当页面成功注册了 service workers 之后,就会发生 install 事件
 self.addEventListener('install', function (e) {
   console.log('[Service Worker] Install');
@@ -35,13 +34,18 @@ self.addEventListener('activate', function (event) {
   );
 });
 
+const noCacheUrls = ['index.html', 'sendNotification', '8000', 'npm', '5984', 'cradb', 'sendSync'];
+
 // 拦截与处理请求
 self.addEventListener('fetch', function (e) {
 
   e.respondWith(
     caches.match(e.request).then(function (r) {
       // 这里可以定义缓存读取策略
-      if (e.request.url.indexOf('index.html') !== -1 || e.request.url.indexOf('sendNotification') !== -1 || e.request.url.indexOf('8000') !== -1 || e.request.url.indexOf('npm') !== -1 || e.request.url.indexOf('5984') !== -1 || e.request.url.indexOf('cradb') !== -1) {
+      let item = noCacheUrls.find(item => {
+        return e.request.url.indexOf(item) !== -1;
+      });
+      if (item) {
         return fetch(e.request).then(function (response) {
           return response;
         });
@@ -70,17 +74,47 @@ self.addEventListener('push', function (event) {
   if (payload.tag === 'silent') {
     SendMsg(payload.data);
   } else if (payload.tag === 'openWindow') {
-    var notif = self.registration.showNotification(payload.title, {
-      body: payload.body,
-      icon: payload.icon,
-      tag: payload.tag,
-      data: payload.data.url
-    });
-    event.waitUntil(notif);
+    showNotification(event, payload);
   }
 
 });
 
+const messageMap = {};
+
+self.addEventListener('message', function (e) {
+  console.log('service worker收到消息', e.data);
+  messageMap[e.data.tag] = e.data.msg;
+});
+
+
+// 后端同步
+self.addEventListener('sync', event => {
+  if (event.tag === 'send-tag') {
+    console.log(event.tag, messageMap[event.tag]);
+    event.waitUntil(
+      fetch('http://127.0.0.1:8000/sendSync', {
+        method: 'post',
+        mode: 'cors',
+        body: JSON.stringify(messageMap[event.tag]),
+      }).then(response => {
+        return response.json();
+      })
+        .then(payload => {
+          if (payload.tag === 'silent') {
+            SendMsg(payload.data);
+          } else if (payload.tag === 'openWindow') {
+            showNotification(event, payload);
+          }
+          return payload;
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    );
+  }
+});
+
+// 点击通知事件
 self.onnotificationclick = function (event) {
   console.log('On notification click: ', event.notification.tag);
   event.notification.close();
@@ -89,7 +123,6 @@ self.onnotificationclick = function (event) {
 
 function openWindow(event, url) {
   event.waitUntil(
-
     clients.matchAll({
       type: 'window'
     })
@@ -109,6 +142,7 @@ function openWindow(event, url) {
   );
 }
 
+// postMessage
 function SendMsg(data) {
   self.clients.matchAll()
     .then(function (clients) {
@@ -118,5 +152,16 @@ function SendMsg(data) {
         })
       }
     })
+}
+
+// showNotification
+function showNotification(event, payload) {
+  var notif = self.registration.showNotification(payload.title, {
+    body: payload.body,
+    icon: payload.icon,
+    tag: payload.tag,
+    data: payload.data.url
+  });
+  event.waitUntil(notif);
 }
 

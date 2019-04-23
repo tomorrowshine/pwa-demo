@@ -36,6 +36,21 @@ if ('serviceWorker' in navigator) {
                 }
             });
     };
+
+    document.getElementById('sync').onclick = function () {
+        if ('SyncManager' in window) {
+            const tag = 'send-tag';
+            navigator.serviceWorker.controller.postMessage({ tag: tag, msg: { name: 'lc' } });
+            swRegistration.sync.register(tag).then(function () {
+                console.log('后台同步已触发');
+            }).catch(function (err) {
+                console.log('后台同步触发失败', err);
+            });
+        } else {
+            console.log('不支持后端同步');
+        }
+    };
+
     //接收sw消息
     navigator.serviceWorker.addEventListener('message', function (event) {
         console.log(event.data)
@@ -70,10 +85,7 @@ if ('serviceWorker' in navigator) {
         // in the server).
         fetch('http://127.0.0.1:8000/sendNotification', {
             method: 'post',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            mode: 'no-cors',
+            mode: 'cors',
             body: JSON.stringify({
                 subscription: subscription
             }),
@@ -104,8 +116,8 @@ if ('serviceWorker' in navigator) {
             };
         }
     }
-    //分享
 
+    //分享
     if (navigator.share) {
         const sharePage = () => {
             navigator
