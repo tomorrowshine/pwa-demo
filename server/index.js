@@ -3,7 +3,7 @@
 // For details, see https://tools.ietf.org/html/draft-ietf-webpush-protocol and
 // https://tools.ietf.org/html/draft-ietf-webpush-encryption.
 
-// 公钥私钥生成 https://web-push-codelab.glitch.me/ 
+// 公钥私钥生成 https://web-push-codelab.glitch.me/
 
 // http://www.connecto.io/kb/knwbase/getting-gcm-sender-id-and-gcm-api-key/
 
@@ -21,6 +21,8 @@ if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
 }
 // webpush.setGCMAPIKey('<Your GCM API Key Here>');
 // // Set the keys used for encrypting the push messages.
+
+// https://firebase.google.com/docs/?hl=zh-cn
 // webPush.setVapidDetails(
 //     'https://serviceworke.rs/',
 //     process.env.VAPID_PUBLIC_KEY,

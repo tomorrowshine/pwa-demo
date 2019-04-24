@@ -64,8 +64,8 @@ if ('serviceWorker' in navigator) {
         // const applicationServerPublicKey = "BBh0BvNIu56yhPEScv6KxycqSmpRBY2cc5-Z2697zS412keLKLuAYXDtPGVPE2uijwWhj14Ffoq1J0PhzwWOba4";
         // const applicationServerKey = urlBase64ToUint8Array(applicationServerPublicKey);
         swRegistration.pushManager.subscribe({
-            userVisibleOnly: true,
-            // applicationServerKey: applicationServerKey
+            userVisibleOnly: true,// 表示消息是否必须要可见，如果设置为不可见，Chrome将会报错
+            // applicationServerKey: applicationServerKey // 服务端的公钥
         })
             // 用户同意
             .then(function (subscription) {

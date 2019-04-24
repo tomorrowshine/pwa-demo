@@ -1,5 +1,5 @@
-var db = new PouchDB('cradb');
-var dbUrl = 'http://127.0.0.1:5984/cradb';
+const db = new PouchDB('cradb');
+const dbUrl = 'http://127.0.0.1:5984/cradb';
 
 db.replicate.to(dbUrl).then(function (result) {
     listWord();
